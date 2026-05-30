@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  fafo-app:
+    build: .
+    container_name: fafo_incident_system
+    ports:
+      - "8501:8501"
+    volumes:
+      # Mount critical directories to persist data outside the container
+      - ./database:/app/database
+      - ./evidence_repository:/app/evidence_repository
+      - ./exports:/app/exports
+      - ./logs:/app/logs
+      - ./.env:/app/.env
+    restart: unless-stopped
