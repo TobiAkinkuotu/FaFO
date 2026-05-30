@@ -1,7 +1,7 @@
 import streamlit as st
 import sqlite3
 import pandas as pd
-from config.settings import DATABASE_PATH
+from app_config.settings import DATABASE_PATH
 from database.connection import get_db_connection
 from modules.export_manager import render_export_panel
 from modules.audit_logger import log_action

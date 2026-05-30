@@ -5,7 +5,7 @@ settings_panel.py — System settings configuration for Admins.
 import streamlit as st
 import sqlite3
 import json
-from config.settings import DATABASE_PATH
+from app_config.settings import DATABASE_PATH
 from modules.auth import logout_user
 
 # ── CSS ───────────────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from config.settings import EVIDENCE_REPO_PATH
+from app_config.settings import EVIDENCE_REPO_PATH
 
 def init_incident_repo(incident_id: str) -> Path:
     """Create the folder structure for a new incident."""

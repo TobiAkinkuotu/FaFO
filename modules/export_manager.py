@@ -12,7 +12,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from config.settings import EXPORTS_DIR, EVIDENCE_REPO_PATH, DATABASE_PATH
+from app_config.settings import EXPORTS_DIR, EVIDENCE_REPO_PATH, DATABASE_PATH
 from database.connection import get_db_connection
 from modules.audit_logger import log_action
 from modules.utils import generate_uuid, get_utc_now

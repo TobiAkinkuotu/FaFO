@@ -4,7 +4,7 @@ import pandas as pd
 import zipfile
 import io
 from pathlib import Path
-from config.settings import DATABASE_PATH
+from app_config.settings import DATABASE_PATH
 from modules.rbac import abort_if_unauthorized
 
 # ---------------------------------------------------------------------------

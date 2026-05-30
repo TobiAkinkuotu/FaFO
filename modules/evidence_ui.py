@@ -5,7 +5,7 @@ import datetime
 import os
 import pathlib
 import json
-from config.settings import DATABASE_PATH, UPLOADS_DIR
+from app_config.settings import DATABASE_PATH, UPLOADS_DIR
 from database.connection import get_db_connection
 from modules.audit_logger import log_action
 from modules.notifications import notify_evidence_uploaded

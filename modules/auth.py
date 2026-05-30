@@ -11,7 +11,7 @@ import logging
 import streamlit as st
 import bcrypt
 from database.connection import get_db_connection
-from config.settings import (
+from app_config.settings import (
     SECRET_KEY, DATABASE_PATH, SESSION_TIMEOUT_MINUTES,
     MAX_LOGIN_ATTEMPTS, LOCKOUT_MINUTES
 )

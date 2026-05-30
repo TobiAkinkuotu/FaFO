@@ -5,7 +5,7 @@ import requests
 from datetime import datetime, timezone
 from typing import Dict, Optional
 
-from config.settings import DATABASE_PATH
+from app_config.settings import DATABASE_PATH
 from database.connection import get_db_connection
 from modules.audit_logger import log_action
 from modules.notifications import notify_ai_analysis_ready
@@ -464,7 +464,7 @@ def run_ai_analysis_for_incident(incident_id: str):
     Fetch description and OCR texts, run AI classification, and store the result.
     """
     import sqlite3
-    from config.settings import DATABASE_PATH
+    from app_config.settings import DATABASE_PATH
     
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()

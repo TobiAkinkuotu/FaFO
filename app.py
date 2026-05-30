@@ -8,7 +8,7 @@ import requests
 from modules.auth import authenticate_user, check_session_timeout, authenticate_google_user, create_session, validate_session, logout_user
 from modules.notifications import render_notification_bell
 from modules.rbac import abort_if_unauthorized, get_pages_for_role
-from config.settings import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, DATABASE_PATH
+from app_config.settings import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, DATABASE_PATH
 from database.connection import get_db_connection
 from database import init_db as db_init
 from database.seed_admin import seed_admin

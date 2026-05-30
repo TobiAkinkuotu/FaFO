@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Optional, Tuple
 import logging
 
-from config.settings import ALLOWED_EXTENSIONS, MAX_FILE_SIZE_MB
+from app_config.settings import ALLOWED_EXTENSIONS, MAX_FILE_SIZE_MB
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ def sanitize_filename(filename: str) -> Optional[str]:
 
 def get_secure_storage_path(incident_id: str, filename: str, category: str) -> Path:
     """Generate a secure storage path for evidence files."""
-    from config.settings import EVIDENCE_REPO_PATH
+    from app_config.settings import EVIDENCE_REPO_PATH
 
     if not incident_id or '/' in incident_id or '\\' in incident_id or '..' in incident_id:
         raise ValueError("Invalid incident ID")

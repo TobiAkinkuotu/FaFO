@@ -1,6 +1,6 @@
 import sqlite3
 
-from config.settings import DATABASE_PATH
+from app_config.settings import DATABASE_PATH
 
 
 def get_db_connection(db_path=None):

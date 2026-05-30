@@ -8,7 +8,7 @@ from email.mime.text import MIMEText
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from config.settings import NOTIFICATION_EMAILS, SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER
+from app_config.settings import NOTIFICATION_EMAILS, SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER
 from database.connection import get_db_connection
 
 logger = logging.getLogger(__name__)

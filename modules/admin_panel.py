@@ -1,7 +1,7 @@
 import streamlit as st
 import sqlite3
 import pandas as pd
-from config.settings import DATABASE_PATH
+from app_config.settings import DATABASE_PATH
 from database.connection import get_db_connection
 from modules.auth import create_user
 from modules.rbac import abort_if_unauthorized

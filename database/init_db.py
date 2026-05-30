@@ -6,7 +6,7 @@ from pathlib import Path
 # Add project root to sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from config.settings import DATABASE_PATH
+from app_config.settings import DATABASE_PATH
 
 def init_db():
     print(f"Initializing database at {DATABASE_PATH}...")

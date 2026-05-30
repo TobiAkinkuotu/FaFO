@@ -5,7 +5,7 @@ import zipfile
 import io
 import os
 from pathlib import Path
-from config.settings import DATABASE_PATH, EVIDENCE_REPO_PATH
+from app_config.settings import DATABASE_PATH, EVIDENCE_REPO_PATH
 from database.connection import get_db_connection
 from modules.audit_logger import log_action
 

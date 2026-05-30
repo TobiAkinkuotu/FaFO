@@ -10,7 +10,7 @@ import uuid
 
 import streamlit as st
 
-from config.settings import DATABASE_PATH
+from app_config.settings import DATABASE_PATH
 from database.connection import get_db_connection
 from modules.rbac import abort_if_unauthorized
 from modules.ai_classifier import classify_incident

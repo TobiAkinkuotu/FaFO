@@ -2,7 +2,7 @@ import sqlite3
 
 import pytest
 
-import config.settings as settings
+import app_config.settings as settings
 import database.connection as db_connection
 import database.init_db as db_init
 import modules.auth as auth

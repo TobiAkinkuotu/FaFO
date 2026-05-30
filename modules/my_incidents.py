@@ -6,7 +6,7 @@ Shows only incidents created by the currently logged-in user.
 import streamlit as st
 import sqlite3
 import pandas as pd
-from config.settings import DATABASE_PATH
+from app_config.settings import DATABASE_PATH
 from modules.rbac import abort_if_unauthorized
 
 # ── Colour tokens ──────────────────────────────────────────────────────────────

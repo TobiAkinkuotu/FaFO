@@ -1,7 +1,7 @@
 import sqlite3
 import uuid
 from datetime import datetime
-from config.settings import DATABASE_PATH
+from app_config.settings import DATABASE_PATH
 import logging
 
 logger = logging.getLogger(__name__)

@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-from config.settings import DATABASE_PATH
+from app_config.settings import DATABASE_PATH
 from modules.auth import get_password_hash
 
 def seed_admin():
