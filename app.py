@@ -242,6 +242,9 @@ st.markdown("""
 
 
 def get_google_login_url():
+    if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET and GOOGLE_REDIRECT_URI):
+        return None
+
     auth_endpoint = "https://accounts.google.com/o/oauth2/v2/auth"
     params = {
         "client_id": GOOGLE_CLIENT_ID,
@@ -326,7 +329,9 @@ def _safe_render_page(page: str):
 def login_form():
     """Render login page using native Streamlit widgets styled with CSS."""
 
-    google_url = get_google_login_url() if GOOGLE_CLIENT_ID else None
+    google_url = get_google_login_url()
+    google_configured = bool(GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET and GOOGLE_REDIRECT_URI)
+    google_misconfigured = bool(GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET or GOOGLE_REDIRECT_URI) and not google_configured
 
     # ── Centre column layout ──────────────────────────────────────────────────
     _, centre, _ = st.columns([1, 1.4, 1])
@@ -356,6 +361,17 @@ def login_form():
             )
         else:
             st.button("🔵  Sign in with Google", disabled=True, use_container_width=True)
+            if google_misconfigured:
+                st.info(
+                    "Google OAuth is partially configured but missing required settings. "
+                    "Set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_REDIRECT_URI in Streamlit Cloud."
+                )
+            elif not GOOGLE_CLIENT_ID:
+                st.info("Google login is disabled because GOOGLE_CLIENT_ID is not configured.")
+            elif not GOOGLE_CLIENT_SECRET:
+                st.info("Google login is disabled because GOOGLE_CLIENT_SECRET is not configured.")
+            elif not GOOGLE_REDIRECT_URI:
+                st.info("Google login is disabled because GOOGLE_REDIRECT_URI is not configured.")
 
         st.markdown(
             "<div style='display:flex;align-items:center;gap:12px;margin:16px 0;'>"
