@@ -1,5 +1,0 @@
-tesseract-ocr
-ffmpeg
-poppler-utils
-libgl1-mesa-glx
-libmagic1
