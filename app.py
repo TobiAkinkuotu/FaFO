@@ -577,6 +577,27 @@ else:
         page = st.session_state.get("active_page", pages[0] if pages else "Settings")
         abort_if_unauthorized(page, st.session_state.get("role"))
 
+        # ── Top navigation menu (visible when sidebar is closed) ──────────────
+        col1, col2 = st.columns([0.05, 0.95])
+        with col1:
+            if st.button("☰", help="Open menu", key="nav_menu_toggle", use_container_width=True):
+                st.session_state["show_nav_menu"] = not st.session_state.get("show_nav_menu", False)
+        
+        # Show navigation menu when toggled
+        if st.session_state.get("show_nav_menu", False):
+            st.divider()
+            st.subheader("Navigation")
+            for page_name in pages:
+                is_active = st.session_state["active_page"] == page_name
+                if st.button(page_name, key=f"nav_menu_{page_name}", use_container_width=True):
+                    st.session_state["active_page"] = page_name
+                    st.session_state["show_nav_menu"] = False
+                    st.rerun()
+            st.divider()
+            if st.button("⎋ Logout", use_container_width=True, key="nav_menu_logout"):
+                logout_user(st.session_state)
+                st.rerun()
+
         st.markdown(
             f"""
             <div style='padding: 18px 0 14px 0;'>
