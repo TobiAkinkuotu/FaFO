@@ -19,13 +19,13 @@ def seed_admin():
     ]
     
     for username, password, role, email in test_users:
-        cursor.execute("SELECT id FROM users WHERE username = ?", (username,))
-        if cursor.fetchone() is None:
-            hashed_pw = get_password_hash(password)
-            cursor.execute("""
-                INSERT INTO users (username, password_hash, role, email)
-                VALUES (?, ?, ?, ?)
-            """, (username, hashed_pw, role, email))
+        hashed_pw = get_password_hash(password)
+        cursor.execute("""
+            INSERT OR IGNORE INTO users (username, password_hash, role, email)
+            VALUES (?, ?, ?, ?)
+        """, (username, hashed_pw, role, email))
+
+        if cursor.rowcount == 1:
             print(f"{role.capitalize()} user created: {username} / {password}")
         else:
             print(f"{role.capitalize()} user already exists: {username}")
