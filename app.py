@@ -295,6 +295,37 @@ def _render_sidebar():
     return pages
 
 
+def _render_sidebar_styles():
+    collapsed = st.session_state.get("sidebar_collapsed", False)
+    sidebar_width = "0px" if collapsed else "280px"
+    content_visibility = "hidden" if collapsed else "visible"
+    content_opacity = "0" if collapsed else "1"
+
+    st.markdown(f"""
+    <style>
+      section[data-testid="stSidebar"] {{
+        width: {sidebar_width} !important;
+        min-width: {sidebar_width} !important;
+        max-width: {sidebar_width} !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        transition: width 0.25s ease, min-width 0.25s ease, max-width 0.25s ease;
+      }}
+      section[data-testid="stSidebar"] > div {{
+        opacity: {content_opacity} !important;
+        visibility: {content_visibility} !important;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+      }}
+      section[data-testid="stSidebar"] {{
+        border-right: 1px solid #1A3A5C !important;
+      }}
+      section[data-testid="stSidebar"][style*="width: 0px"] {{
+        border-right: none !important;
+      }}
+    </style>
+    """, unsafe_allow_html=True)
+
+
 def _safe_render_page(page: str):
     page_mapping = {
         "Dashboard": ("modules.dashboard", "render_dashboard"),
@@ -555,30 +586,20 @@ else:
         logout_user(st.session_state)
         st.rerun()
     else:
+        _render_sidebar_styles()
         pages = _render_sidebar()
         page = st.session_state.get("active_page", pages[0] if pages else "Settings")
         abort_if_unauthorized(page, st.session_state.get("role"))
 
-        # ── Top navigation menu (visible when sidebar is closed) ──────────────
-        col1, col2 = st.columns([0.05, 0.95])
+        col1, col2 = st.columns([0.12, 0.88])
         with col1:
-            if st.button("☰", help="Open menu", key="nav_menu_toggle", use_container_width=True):
-                st.session_state["show_nav_menu"] = not st.session_state.get("show_nav_menu", False)
-        
-        # Show navigation menu when toggled
-        if st.session_state.get("show_nav_menu", False):
-            st.divider()
-            st.subheader("Navigation")
-            for page_name in pages:
-                is_active = st.session_state["active_page"] == page_name
-                if st.button(page_name, key=f"nav_menu_{page_name}", use_container_width=True):
-                    st.session_state["active_page"] = page_name
-                    st.session_state["show_nav_menu"] = False
-                    st.rerun()
-            st.divider()
-            if st.button("⎋ Logout", use_container_width=True, key="nav_menu_logout"):
-                logout_user(st.session_state)
+            collapsed = st.session_state.get("sidebar_collapsed", False)
+            toggle_label = "☰ Open menu" if collapsed else "✕ Close menu"
+            if st.button(toggle_label, help="Toggle side navigation", key="sidebar_toggle", use_container_width=True):
+                st.session_state["sidebar_collapsed"] = not collapsed
                 st.rerun()
+        with col2:
+            pass
 
         st.markdown(
             f"""
