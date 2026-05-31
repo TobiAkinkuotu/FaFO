@@ -72,7 +72,7 @@ st.markdown("""
     padding-bottom: 2.5rem !important;
   }
   section[data-testid="stSidebar"] {
-    min-width: 260px !important;
+    min-width: unset !important;
   }
 
   /* ── Dark input fields ── */
@@ -327,8 +327,6 @@ def _render_sidebar():
 def _render_sidebar_styles():
     collapsed = st.session_state.get("sidebar_collapsed", False)
     width = "68px" if collapsed else "280px"
-    min_width = "68px" if collapsed else "280px"
-    max_width = "68px" if collapsed else "280px"
     padding = "12px 8px" if collapsed else "18px 16px"
     border = "none" if collapsed else "1px solid #1A3A5C"
     main_pad = "2rem" if collapsed else "1.5rem"
@@ -338,20 +336,20 @@ def _render_sidebar_styles():
     <style>
       section[data-testid="stSidebar"] {{
         width: {width} !important;
-        min-width: {min_width} !important;
-        max-width: {max_width} !important;
+        min-width: {width} !important;
+        max-width: {width} !important;
         padding: {padding} !important;
         overflow: hidden !important;
         border-right: {border} !important;
         background-color: rgba(17, 34, 54, 0.95) !important;
         transition: width 0.3s ease, min-width 0.3s ease, max-width 0.3s ease,
-                    padding 0.3s ease, border-color 0.3s ease;
+                    padding 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
       }}
 
       .main .block-container {{
         max-width: 100% !important;
         padding-left: {main_pad} !important;
-        padding-right: {main_pad} !important;
+        padding-right: 1.5rem !important;
         transition: padding-left 0.3s ease, padding-right 0.3s ease;
       }}
 
