@@ -399,30 +399,6 @@ def login_form():
                 help="Select the role you're signing in as"
             )
 
-            # Role badge + description
-            ROLE_COLORS = {
-                "admin": "#D93025",
-                "reviewer": "#1A73E8",
-                "submitter": "#1E6DB5",
-                "lawyer": "#6A1B9A",
-            }
-            role_color = ROLE_COLORS.get(selected_role, "#6C6C6C")
-            role_desc = ROLE_DESCRIPTIONS.get(selected_role, "")
-            st.markdown(
-                f"<div style='display:flex;align-items:center;gap:12px;margin-bottom:8px;'>"
-                f"<div style='background:{role_color};color:#fff;padding:6px 12px;border-radius:999px;font-weight:700'>{selected_role.upper()}</div>"
-                f"<div style='color:#A8BECF;font-size:13px'>{role_desc}</div>"
-                f"</div>",
-                unsafe_allow_html=True,
-            )
-
-            st.markdown(
-                "<div style='color:#A8BECF;font-size:13px;margin-bottom:10px;'>"
-                "After logging in, we will verify the account role matches the selected role."
-                "</div>",
-                unsafe_allow_html=True,
-            )
-
             submit = st.form_submit_button("Login", use_container_width=True)
 
             if submit:
@@ -507,7 +483,7 @@ def login_form():
       **Quick steps to log in:**
 
       1. Enter the username and password for your account.
-      2. Select the role you're signing in as from the `Role` dropdown.
+      2. Select the role you're signing in as from the `Role` radio button.
       3. Click the **Login** button.
 
       **Seeded demo accounts:**
@@ -515,6 +491,12 @@ def login_form():
       - `reviewer` / `reviewer123` (reviewer)
       - `lawyer` / `lawyer123` (lawyer)
       - `submitter` / `submitter123` (submitter)
+
+      **Role descriptions:**
+      - **Admin** — Full system access, user management, and configuration.
+      - **Reviewer** — Review and approve submitted incidents.
+      - **Lawyer** — Access legal portal and case management tools.
+      - **Submitter** — Submit new incidents and manage their own submissions.
 
       If your login fails, ensure you selected the correct role before confirming.
       """, unsafe_allow_html=True)
