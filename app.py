@@ -384,8 +384,20 @@ def login_form():
 
         # Native Streamlit form
         with st.form("login_form", clear_on_submit=False):
-            # Horizontal radio gives a clearer, more visual role picker
-            selected_role = st.radio("Role", options=VALID_ROLES, index=0, horizontal=True, help="Select the role you're signing in as")
+            # 1. Username
+            username = st.text_input("Username", placeholder="Enter your username")
+
+            # 2. Password
+            password = st.text_input("Password", placeholder="Enter your password", type="password")
+
+            # 3. Role (now below password)
+            selected_role = st.radio(
+                "Role",
+                options=VALID_ROLES,
+                index=0,
+                horizontal=True,
+                help="Select the role you're signing in as"
+            )
 
             # Role badge + description
             ROLE_COLORS = {
@@ -403,9 +415,6 @@ def login_form():
                 f"</div>",
                 unsafe_allow_html=True,
             )
-
-            username = st.text_input("Username", placeholder="Enter your username")
-            password = st.text_input("Password", placeholder="Enter your password", type="password")
 
             st.markdown(
                 "<div style='color:#A8BECF;font-size:13px;margin-bottom:10px;'>"
@@ -497,9 +506,9 @@ def login_form():
       st.markdown("""
       **Quick steps to log in:**
 
-      1. Select the role you're signing in as from the `Role` dropdown.
-      2. Enter the username and password for that role.
-      3. Check the confirmation box to enable the Login button.
+      1. Enter the username and password for your account.
+      2. Select the role you're signing in as from the `Role` dropdown.
+      3. Click the **Login** button.
 
       **Seeded demo accounts:**
       - `admin` / `admin123` (admin)
