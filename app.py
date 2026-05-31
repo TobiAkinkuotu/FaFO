@@ -408,16 +408,18 @@ def login_form():
             username = st.text_input("Username", placeholder="Enter your username")
             password = st.text_input("Password", placeholder="Enter your password", type="password")
 
-            # Clear, role-aware confirmation message
-            confirm_label = f"I confirm I am signing in as '{selected_role}' and understand the access permissions for this role."
-            confirm_role = st.checkbox(confirm_label, key="confirm_role_checkbox")
+            st.markdown(
+                "<div style='color:#A8BECF;font-size:13px;margin-bottom:10px;'>"
+                "After logging in, we will verify the account role matches the selected role."
+                "</div>",
+                unsafe_allow_html=True,
+            )
 
-            submit = st.form_submit_button("Login", use_container_width=True, disabled=not confirm_role)
+            submit = st.form_submit_button("Login", use_container_width=True)
 
             if submit:
                 user_dict, err_msg = authenticate_user(username, password)
                 if user_dict:
-                    # Validate the selected role matches the account role
                     account_role = user_dict.get("role")
                     if account_role != selected_role:
                         st.error(
@@ -429,31 +431,6 @@ def login_form():
                         st.rerun()
                 else:
                     st.error(err_msg or "Invalid credentials.")
-
-        # Developer convenience: auto-login as admin when enabled via env
-        # Set FAFO_DEV_AUTO_LOGIN=1 in your environment to enable this button.
-        try:
-          dev_auto = os.getenv("FAFO_DEV_AUTO_LOGIN", "0") == "1"
-        except Exception:
-          dev_auto = False
-
-        if dev_auto:
-          if st.button("Auto-login as admin (dev only)", use_container_width=True):
-            try:
-              conn = get_db_connection()
-              cursor = conn.cursor()
-              cursor.execute("SELECT id, username, role FROM users WHERE username = 'admin' LIMIT 1")
-              row = cursor.fetchone()
-              conn.close()
-              if row:
-                user_id, uname, role = row
-                create_session(st.session_state, uname, role, user_id)
-                st.success("Auto-logged in as admin")
-                st.rerun()
-              else:
-                st.error("No admin user found in the database.")
-            except Exception as exc:
-              st.error(f"Auto-login failed: {exc}")
 
     # Bottom watermark rendered separately
     st.markdown("""
