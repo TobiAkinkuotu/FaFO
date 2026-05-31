@@ -485,19 +485,24 @@ def login_form():
     st.markdown("""
     <style>
       /* Style the login form block to look like it's inside the card */
-      div[data-testid="stForm"] {
+      form[data-testid="stForm"], div[data-testid="stForm"], .stForm {
+        display: block !important;
+        opacity: 1 !important;
         background: #112236 !important;
         border: none !important;
         padding: 0 24px 24px 24px !important;
         border-radius: 0 0 16px 16px !important;
         margin-top: -8px !important;
-        position: relative;
+        position: relative !important;
         box-shadow: 0 8px 32px rgba(0,0,0,0.2) !important;
         max-width: 380px !important;
         margin-left: auto !important;
         margin-right: auto !important;
+        z-index: 1 !important;
       }
-      div[data-testid="stForm"]::after {
+      form[data-testid="stForm"]::after,
+      div[data-testid="stForm"]::after,
+      .stForm::after {
         content: "🔒";
         position: absolute;
         bottom: 14px;
@@ -507,8 +512,12 @@ def login_form():
         pointer-events: none;
       }
       /* Style submit button inside form */
+      form[data-testid="stForm"] .stButton > button,
       div[data-testid="stForm"] .stButton > button,
-      div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {
+      .stForm .stButton > button,
+      form[data-testid="stForm"] [data-testid="stFormSubmitButton"] button,
+      div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button,
+      .stForm [data-testid="stFormSubmitButton"] button {
         width: 100% !important;
         background: #1E6DB5 !important;
         color: #fff !important;
@@ -519,12 +528,18 @@ def login_form():
         letter-spacing: 0.5px !important;
         border: none !important;
       }
+      form[data-testid="stForm"] .stButton > button:hover,
       div[data-testid="stForm"] .stButton > button:hover,
-      div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button:hover {
+      .stForm .stButton > button:hover,
+      form[data-testid="stForm"] [data-testid="stFormSubmitButton"] button:hover,
+      div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button:hover,
+      .stForm [data-testid="stFormSubmitButton"] button:hover {
         background: #1558A0 !important;
       }
       /* Input fields in form */
-      div[data-testid="stForm"] input {
+      form[data-testid="stForm"] input,
+      div[data-testid="stForm"] input,
+      .stForm input {
         background: #0D1B2A !important;
         border: 1px solid #1A3A5C !important;
         border-radius: 8px !important;
@@ -533,12 +548,19 @@ def login_form():
         height: 44px !important;
         padding: 0 16px !important;
       }
-      div[data-testid="stForm"] input:focus {
+      form[data-testid="stForm"] input:focus,
+      div[data-testid="stForm"] input:focus,
+      .stForm input:focus {
         border-color: #1E6DB5 !important;
         box-shadow: 0 0 8px #1E6DB5 !important;
       }
       /* Label overrides */
-      div[data-testid="stForm"] label { color: #8BA3BE !important; font-size: 12px !important; }
+      form[data-testid="stForm"] label,
+      div[data-testid="stForm"] label,
+      .stForm label {
+        color: #8BA3BE !important;
+        font-size: 12px !important;
+      }
     </style>
     """, unsafe_allow_html=True)
 
