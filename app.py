@@ -421,12 +421,14 @@ def login_form():
                     account_role = user_dict.get("role")
                     if account_role != selected_role:
                         st.error(
-                            f"Selected role '{selected_role}' does not match account role '{account_role}'. \n"
+                            f"Selected role '{selected_role}' does not match account role '{account_role}'. "
                             "Please choose the correct role or contact an administrator."
                         )
-                st.rerun()
-            else:
-              st.error(err_msg or "Invalid credentials.")
+                    else:
+                        create_session(st.session_state, user_dict["username"], user_dict["role"], user_dict["id"])
+                        st.rerun()
+                else:
+                    st.error(err_msg or "Invalid credentials.")
 
         # Developer convenience: auto-login as admin when enabled via env
         # Set FAFO_DEV_AUTO_LOGIN=1 in your environment to enable this button.
