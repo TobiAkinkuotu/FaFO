@@ -8,7 +8,7 @@ import requests
 from modules.auth import authenticate_user, check_session_timeout, authenticate_google_user, create_session, validate_session, logout_user
 from modules.notifications import render_notification_bell
 from modules.rbac import abort_if_unauthorized, get_pages_for_role, normalize_role
-from app_config.roles import ROLE_DESCRIPTIONS
+from app_config.roles import ROLE_DESCRIPTIONS, VALID_ROLES
 from app_config.settings import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, DATABASE_PATH
 from database.connection import get_db_connection
 from database import init_db as db_init
@@ -385,17 +385,29 @@ def login_form():
 
         # Native Streamlit form
         with st.form("login_form", clear_on_submit=False):
-            username = st.text_input("Username", placeholder="Enter your username")
-            password = st.text_input("Password", placeholder="Enter your password", type="password")
-            submit = st.form_submit_button("Login", use_container_width=True)
+          selected_role = st.selectbox("Role", options=VALID_ROLES, index=0, help="Select the role you're signing in as")
+          st.caption(f"Signing in as: {selected_role}")
 
-            if submit:
-                user_dict, err_msg = authenticate_user(username, password)
-                if user_dict:
-                    create_session(st.session_state, user_dict["username"], user_dict["role"], user_dict["id"])
-                    st.rerun()
-                else:
-                    st.error(err_msg or "Invalid credentials.")
+          username = st.text_input("Username", placeholder="Enter your username")
+          password = st.text_input("Password", placeholder="Enter your password", type="password")
+
+          # Require explicit confirmation of selected role before allowing login
+          confirm_role = st.checkbox(f"I confirm I am signing in as '{selected_role}'", key="confirm_role_checkbox")
+
+          submit = st.form_submit_button("Login", use_container_width=True, disabled=not confirm_role)
+
+          if submit:
+            user_dict, err_msg = authenticate_user(username, password)
+            if user_dict:
+              # Validate the selected role matches the account role
+              account_role = user_dict.get("role")
+              if account_role != selected_role:
+                st.error(f"Selected role '{selected_role}' does not match account role '{account_role}'. Please choose the correct role or contact an administrator.")
+              else:
+                create_session(st.session_state, user_dict["username"], user_dict["role"], user_dict["id"])
+                st.rerun()
+            else:
+              st.error(err_msg or "Invalid credentials.")
 
         # Developer convenience: auto-login as admin when enabled via env
         # Set FAFO_DEV_AUTO_LOGIN=1 in your environment to enable this button.
@@ -482,6 +494,24 @@ def login_form():
       div[data-testid="stForm"] label { color: #8BA3BE !important; font-size: 12px !important; }
     </style>
     """, unsafe_allow_html=True)
+
+    # Demo login/help box to guide new users
+    with st.expander("Demo Login & Quick Help", expanded=True):
+      st.markdown("""
+      **Quick steps to log in:**
+
+      1. Select the role you're signing in as from the `Role` dropdown.
+      2. Enter the username and password for that role.
+      3. Check the confirmation box to enable the Login button.
+
+      **Seeded demo accounts:**
+      - `admin` / `admin123` (admin)
+      - `reviewer` / `reviewer123` (reviewer)
+      - `lawyer` / `lawyer123` (lawyer)
+      - `submitter` / `submitter123` (submitter)
+
+      If your login fails, ensure you selected the correct role before confirming.
+      """, unsafe_allow_html=True)
 
 
 # ─── Handle Google OAuth callback ─────────────────────────────────────────────
