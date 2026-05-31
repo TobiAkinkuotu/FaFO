@@ -385,26 +385,45 @@ def login_form():
 
         # Native Streamlit form
         with st.form("login_form", clear_on_submit=False):
-          selected_role = st.selectbox("Role", options=VALID_ROLES, index=0, help="Select the role you're signing in as")
-          st.caption(f"Signing in as: {selected_role}")
+            # Horizontal radio gives a clearer, more visual role picker
+            selected_role = st.radio("Role", options=VALID_ROLES, index=0, horizontal=True, help="Select the role you're signing in as")
 
-          username = st.text_input("Username", placeholder="Enter your username")
-          password = st.text_input("Password", placeholder="Enter your password", type="password")
+            # Role badge + description
+            ROLE_COLORS = {
+                "admin": "#D93025",
+                "reviewer": "#1A73E8",
+                "submitter": "#1E6DB5",
+                "lawyer": "#6A1B9A",
+            }
+            role_color = ROLE_COLORS.get(selected_role, "#6C6C6C")
+            role_desc = ROLE_DESCRIPTIONS.get(selected_role, "")
+            st.markdown(
+                f"<div style='display:flex;align-items:center;gap:12px;margin-bottom:8px;'>"
+                f"<div style='background:{role_color};color:#fff;padding:6px 12px;border-radius:999px;font-weight:700'>{selected_role.upper()}</div>"
+                f"<div style='color:#A8BECF;font-size:13px'>{role_desc}</div>"
+                f"</div>",
+                unsafe_allow_html=True,
+            )
 
-          # Require explicit confirmation of selected role before allowing login
-          confirm_role = st.checkbox(f"I confirm I am signing in as '{selected_role}'", key="confirm_role_checkbox")
+            username = st.text_input("Username", placeholder="Enter your username")
+            password = st.text_input("Password", placeholder="Enter your password", type="password")
 
-          submit = st.form_submit_button("Login", use_container_width=True, disabled=not confirm_role)
+            # Clear, role-aware confirmation message
+            confirm_label = f"I confirm I am signing in as '{selected_role}' and understand the access permissions for this role."
+            confirm_role = st.checkbox(confirm_label, key="confirm_role_checkbox")
 
-          if submit:
-            user_dict, err_msg = authenticate_user(username, password)
-            if user_dict:
-              # Validate the selected role matches the account role
-              account_role = user_dict.get("role")
-              if account_role != selected_role:
-                st.error(f"Selected role '{selected_role}' does not match account role '{account_role}'. Please choose the correct role or contact an administrator.")
-              else:
-                create_session(st.session_state, user_dict["username"], user_dict["role"], user_dict["id"])
+            submit = st.form_submit_button("Login", use_container_width=True, disabled=not confirm_role)
+
+            if submit:
+                user_dict, err_msg = authenticate_user(username, password)
+                if user_dict:
+                    # Validate the selected role matches the account role
+                    account_role = user_dict.get("role")
+                    if account_role != selected_role:
+                        st.error(
+                            f"Selected role '{selected_role}' does not match account role '{account_role}'. \n"
+                            "Please choose the correct role or contact an administrator."
+                        )
                 st.rerun()
             else:
               st.error(err_msg or "Invalid credentials.")
