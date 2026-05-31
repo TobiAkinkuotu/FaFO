@@ -487,6 +487,7 @@ def login_form():
       /* Style the login form block to look like it's inside the card */
       form[data-testid="stForm"], div[data-testid="stForm"], .stForm {
         display: block !important;
+        visibility: visible !important;
         opacity: 1 !important;
         background: #112236 !important;
         border: none !important;
@@ -498,7 +499,7 @@ def login_form():
         max-width: 380px !important;
         margin-left: auto !important;
         margin-right: auto !important;
-        z-index: 1 !important;
+        z-index: 9999 !important;
       }
       form[data-testid="stForm"]::after,
       div[data-testid="stForm"]::after,
