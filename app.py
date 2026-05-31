@@ -265,62 +265,98 @@ def _render_sidebar():
     if "active_page" not in st.session_state or st.session_state["active_page"] not in pages:
         st.session_state["active_page"] = pages[0] if pages else "Settings"
 
+    collapsed = st.session_state.get("sidebar_collapsed", False)
+    icon_map = {
+        "Dashboard": "📊",
+        "Submit Incident": "➕",
+        "Search & Export": "🔍",
+        "Upload Evidence": "📁",
+        "Lawyer Portal": "⚖️",
+        "My Incidents": "📋",
+        "Evidence Repository": "🗄️",
+        "Settings": "⚙️",
+    }
+
     with st.sidebar:
-        st.markdown(f"""
-        <div style="padding: 16px 0 20px 0; border-bottom: 1px solid #1A3A5C; margin-bottom: 16px;">
-          <div style="font-size:20px; font-weight:700; color:#1A73E8; letter-spacing:2px;">🛡️ FAFO</div>
-          <div style="font-size:11px; color:#8BA3BE; margin-top:2px;">Incident Preservation System</div>
-        </div>
-        <div style="font-size:13px; color:#8BA3BE; margin-bottom:4px;">Signed in as</div>
-        <div style="font-size:14px; font-weight:600; color:#EAF1F8; margin-bottom:16px;">
-          {st.session_state.get('username', 'Unknown')}
-          <span style="background:#1A3A5C;color:#1A73E8;font-size:11px;padding:2px 8px;border-radius:4px;margin-left:6px;">
-            {st.session_state.get('role', 'USER').upper()}
-          </span>
-        </div>
-        """ , unsafe_allow_html=True)
+        if collapsed:
+            st.markdown(
+                "<div style='text-align:center;font-size:28px;line-height:1.1;margin-bottom:18px;'>🛡️</div>",
+                unsafe_allow_html=True,
+            )
+            for page_name in pages:
+                icon = icon_map.get(page_name, "•")
+                if st.button(icon, key=f"nav_icon_{page_name}", help=page_name, use_container_width=True):
+                    st.session_state["active_page"] = page_name
+                    st.session_state["sidebar_collapsed"] = False
+                    st.rerun()
 
-        for page_name in pages:
-            is_active = st.session_state["active_page"] == page_name
-            btn_type = "primary" if is_active else "secondary"
-            if st.button(page_name, key=f"nav_{page_name}", use_container_width=True, type=btn_type):
-                st.session_state["active_page"] = page_name
+            st.divider()
+            if st.button("⎋", help="Logout", use_container_width=True, key="nav_icon_logout"):
+                logout_user(st.session_state)
                 st.rerun()
+        else:
+            st.markdown(f"""
+            <div style="padding: 16px 0 20px 0; border-bottom: 1px solid #1A3A5C; margin-bottom: 16px;">
+              <div style="font-size:20px; font-weight:700; color:#1A73E8; letter-spacing:2px;">🛡️ FAFO</div>
+              <div style="font-size:11px; color:#8BA3BE; margin-top:2px;">Incident Preservation System</div>
+            </div>
+            <div style="font-size:13px; color:#8BA3BE; margin-bottom:4px;">Signed in as</div>
+            <div style="font-size:14px; font-weight:600; color:#EAF1F8; margin-bottom:16px;">
+              {st.session_state.get('username', 'Unknown')}
+              <span style="background:#1A3A5C;color:#1A73E8;font-size:11px;padding:2px 8px;border-radius:4px;margin-left:6px;">
+                {st.session_state.get('role', 'USER').upper()}
+              </span>
+            </div>
+            """ , unsafe_allow_html=True)
 
-        st.divider()
-        if st.button("⎋ Logout", use_container_width=True):
-            logout_user(st.session_state)
-            st.rerun()
+            for page_name in pages:
+                is_active = st.session_state["active_page"] == page_name
+                btn_type = "primary" if is_active else "secondary"
+                if st.button(page_name, key=f"nav_{page_name}", use_container_width=True, type=btn_type):
+                    st.session_state["active_page"] = page_name
+                    st.rerun()
+
+            st.divider()
+            if st.button("⎋ Logout", use_container_width=True):
+                logout_user(st.session_state)
+                st.rerun()
 
     return pages
 
 
 def _render_sidebar_styles():
     collapsed = st.session_state.get("sidebar_collapsed", False)
-    sidebar_width = "0px" if collapsed else "280px"
-    content_visibility = "hidden" if collapsed else "visible"
-    content_opacity = "0" if collapsed else "1"
+    width = "68px" if collapsed else "280px"
+    min_width = "68px" if collapsed else "280px"
+    max_width = "68px" if collapsed else "280px"
+    padding = "12px 8px" if collapsed else "18px 16px"
+    border = "none" if collapsed else "1px solid #1A3A5C"
+    main_pad = "2rem" if collapsed else "1.5rem"
+    header_display = "none" if collapsed else "flex"
 
     st.markdown(f"""
     <style>
       section[data-testid="stSidebar"] {{
-        width: {sidebar_width} !important;
-        min-width: {sidebar_width} !important;
-        max-width: {sidebar_width} !important;
-        padding: 0 !important;
+        width: {width} !important;
+        min-width: {min_width} !important;
+        max-width: {max_width} !important;
+        padding: {padding} !important;
         overflow: hidden !important;
-        transition: width 0.25s ease, min-width 0.25s ease, max-width 0.25s ease;
+        border-right: {border} !important;
+        background-color: rgba(17, 34, 54, 0.95) !important;
+        transition: width 0.3s ease, min-width 0.3s ease, max-width 0.3s ease,
+                    padding 0.3s ease, border-color 0.3s ease;
       }}
-      section[data-testid="stSidebar"] > div {{
-        opacity: {content_opacity} !important;
-        visibility: {content_visibility} !important;
-        transition: opacity 0.25s ease, visibility 0.25s ease;
+
+      .main .block-container {{
+        max-width: 100% !important;
+        padding-left: {main_pad} !important;
+        padding-right: {main_pad} !important;
+        transition: padding-left 0.3s ease, padding-right 0.3s ease;
       }}
-      section[data-testid="stSidebar"] {{
-        border-right: 1px solid #1A3A5C !important;
-      }}
-      section[data-testid="stSidebar"][style*="width: 0px"] {{
-        border-right: none !important;
+
+      button[kind="header"] {{
+        display: {header_display} !important;
       }}
     </style>
     """, unsafe_allow_html=True)
@@ -586,6 +622,9 @@ else:
         logout_user(st.session_state)
         st.rerun()
     else:
+        if "sidebar_collapsed" not in st.session_state:
+            st.session_state["sidebar_collapsed"] = False
+
         _render_sidebar_styles()
         pages = _render_sidebar()
         page = st.session_state.get("active_page", pages[0] if pages else "Settings")
