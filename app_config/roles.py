@@ -34,3 +34,12 @@ ROLES = {
         "is_read_only": True,
     }
 }
+
+VALID_ROLES = list(ROLES.keys())
+
+ROLE_DESCRIPTIONS = {
+    "admin": "Manage users, review system status, and oversee workflows.",
+    "reviewer": "Review incidents, assess evidence, and export audit-ready reports.",
+    "submitter": "Submit incidents, attach evidence, and track your reports.",
+    "lawyer": "Review legal cases and access relevant incident summaries.",
+}

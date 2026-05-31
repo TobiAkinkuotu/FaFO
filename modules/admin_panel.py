@@ -157,7 +157,7 @@ def render_admin_panel():
                 conn = get_db_connection(str(DATABASE_PATH))
                 conn.row_factory = sqlite3.Row
                 rows = conn.execute(
-                    "SELECT username, email, role, status, last_login FROM users ORDER BY username"
+                    "SELECT username, email, role, is_active, created_at FROM users ORDER BY username"
                 ).fetchall()
                 conn.close()
                 users = [dict(r) for r in rows]
@@ -167,11 +167,11 @@ def render_admin_panel():
             if users:
                 df_users = pd.DataFrame(users)
                 df_users["Role"] = df_users["role"].fillna("—").str.capitalize()
-                df_users["Status"] = df_users["status"].fillna("—").str.capitalize()
-                df_users["Last Login"] = df_users["last_login"].fillna("—")
+                df_users["Active"] = df_users["is_active"].apply(lambda v: "Yes" if bool(v) else "No")
+                df_users["Created At"] = df_users["created_at"].fillna("—")
                 df_users["Username"] = df_users["username"].fillna("—")
                 df_users["Email"] = df_users["email"].fillna("—")
-                display_users = df_users[["Username", "Email", "Role", "Status", "Last Login"]]
+                display_users = df_users[["Username", "Email", "Role", "Active", "Created At"]]
                 st.dataframe(display_users, use_container_width=True, hide_index=True)
             else:
                 st.info("No users found in the database.")

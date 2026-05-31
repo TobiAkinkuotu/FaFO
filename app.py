@@ -7,7 +7,8 @@ import urllib.parse
 import requests
 from modules.auth import authenticate_user, check_session_timeout, authenticate_google_user, create_session, validate_session, logout_user
 from modules.notifications import render_notification_bell
-from modules.rbac import abort_if_unauthorized, get_pages_for_role
+from modules.rbac import abort_if_unauthorized, get_pages_for_role, normalize_role
+from app_config.roles import ROLE_DESCRIPTIONS
 from app_config.settings import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, DATABASE_PATH
 from database.connection import get_db_connection
 from database import init_db as db_init
@@ -523,6 +524,10 @@ if "code" in st.query_params and not st.session_state.get("authenticated", False
         st.error(f"Google login failed: {e}")
 
 # ─── Main Routing ──────────────────────────────────────────────────────────────
+def _get_role_welcome(role: str) -> str:
+    return ROLE_DESCRIPTIONS.get(normalize_role(role), "Use the left menu to navigate to your permitted pages.")
+
+
 if not st.session_state.get("authenticated", False):
     login_form()
 else:
@@ -535,4 +540,17 @@ else:
         pages = _render_sidebar()
         page = st.session_state.get("active_page", pages[0] if pages else "Settings")
         abort_if_unauthorized(page, st.session_state.get("role"))
+
+        st.markdown(
+            f"""
+            <div style='padding: 18px 0 14px 0;'>
+              <h2 style='margin:0;color:#EAF1F8;'>Welcome back, {st.session_state.get('username', 'User')}!</h2>
+              <p style='margin:8px 0 0 0;color:#A8BECF;font-size:14px;'>
+                { _get_role_welcome(st.session_state.get('role')) }
+              </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
         _safe_render_page(page)

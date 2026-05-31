@@ -15,6 +15,7 @@ from app_config.settings import (
     SECRET_KEY, DATABASE_PATH, SESSION_TIMEOUT_MINUTES,
     MAX_LOGIN_ATTEMPTS, LOCKOUT_MINUTES
 )
+from app_config.roles import VALID_ROLES
 from modules.utils import generate_uuid, get_utc_now
 
 logger = logging.getLogger(__name__)
@@ -136,6 +137,22 @@ def is_account_locked(conn: sqlite3.Connection, username: str) -> tuple[bool, st
     return False, ""
 
 
+def _record_login_attempt(conn: sqlite3.Connection, username: str, success: bool):
+    """Insert a login attempt record for audit/history."""
+    try:
+        conn.execute(
+            "INSERT INTO login_attempts (username, success, attempted_at) VALUES (?, ?, ?)",
+            (
+                username,
+                1 if success else 0,
+                datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+            ),
+        )
+        conn.commit()
+    except Exception:
+        pass
+
+
 def record_failed_login(conn: sqlite3.Connection, username: str):
     """Increment failed login counter and lock account if threshold is reached."""
     cursor = conn.cursor()
@@ -202,6 +219,7 @@ def authenticate_user(username: str, password: str) -> tuple[dict | None, str | 
     try:
         is_locked, lock_msg = is_account_locked(conn, username)
         if is_locked:
+            _record_login_attempt(conn, username, False)
             return None, lock_msg
 
         cursor = conn.cursor()
@@ -213,15 +231,18 @@ def authenticate_user(username: str, password: str) -> tuple[dict | None, str | 
 
         if not row:
             # Don't reveal whether username exists
+            _record_login_attempt(conn, username, False)
             return None, "Invalid username or password."
 
         user_id, password_hash, role, email, is_active = row
 
         if not is_active:
+            _record_login_attempt(conn, username, False)
             return None, "This account has been deactivated."
 
         if not verify_password(password, password_hash):
             record_failed_login(conn, username)
+            _record_login_attempt(conn, username, False)
             cursor.execute(
                 "SELECT failed_logins FROM users WHERE id = ?", (user_id,)
             )
@@ -237,6 +258,7 @@ def authenticate_user(username: str, password: str) -> tuple[dict | None, str | 
         # Success — reset counter and log
         reset_failed_logins(conn, user_id)
         _insert_audit_log(conn, user_id, username, "LOGIN")
+        _record_login_attempt(conn, username, True)
 
         return {
             "id": user_id,
@@ -382,7 +404,7 @@ def refresh_session_timestamp(session_state):
 
 def create_user(username: str, password: str, role: str, email: str = "") -> tuple[bool, str]:
     """Create a new user account. Returns (success, message)."""
-    if role not in ("submitter", "reviewer", "lawyer", "admin"):
+    if role not in VALID_ROLES:
         return False, f"Invalid role: {role}"
 
     password_hash = get_password_hash(password)
@@ -408,7 +430,7 @@ def create_user(username: str, password: str, role: str, email: str = "") -> tup
 
 def update_user_role(target_user_id: int, new_role: str, acting_user_id: int, acting_username: str) -> tuple[bool, str]:
     """Change the role of an existing user."""
-    if new_role not in ("submitter", "reviewer", "lawyer", "admin"):
+    if new_role not in VALID_ROLES:
         return False, f"Invalid role: {new_role}"
     conn = sqlite3.connect(DATABASE_PATH)
     try:

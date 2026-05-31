@@ -152,3 +152,27 @@ def test_authentication_locks_out_user_after_too_many_failed_attempts(tmp_path, 
 
     assert row[0] == 2
     assert row[1] is not None
+
+
+def test_authentication_returns_user_role(tmp_path, monkeypatch):
+    _init_temp_db(tmp_path, monkeypatch)
+    conn = sqlite3.connect(tmp_path / "test_fafo.db")
+    conn.execute(
+        "INSERT INTO users (username, password_hash, role, email, is_active) VALUES (?, ?, ?, ?, ?)",
+        ("lawyer_user", auth.get_password_hash("secret"), "lawyer", "lawyer@example.test", 1),
+    )
+    conn.commit()
+    conn.close()
+
+    user_dict, err_msg = auth.authenticate_user("lawyer_user", "secret")
+    assert err_msg is None
+    assert user_dict is not None
+    assert user_dict["role"] == "lawyer"
+    assert user_dict["username"] == "lawyer_user"
+
+
+def test_create_user_rejects_invalid_role(tmp_path, monkeypatch):
+    _init_temp_db(tmp_path, monkeypatch)
+    success, message = auth.create_user("newuser", "pass123", "invalid_role", "newuser@example.test")
+    assert success is False
+    assert "Invalid role" in message
