@@ -3,7 +3,7 @@ import streamlit as st
 ROLE_PAGES = {
     "submitter": ["Submit Incident", "My Incidents", "Upload Evidence", "Settings"],
     "reviewer": ["Dashboard", "Submit Incident", "Evidence Repository", "Search & Export", "Settings"],
-    "admin": ["Dashboard", "Submit Incident", "Evidence Repository", "Search & Export", "Settings", "Admin Panel"],
+    "admin": ["Dashboard", "Submit Incident", "Evidence Repository", "Search & Export", "Settings"],
     "lawyer": ["Lawyer Portal", "Settings"],
 }
 
@@ -14,7 +14,6 @@ PAGE_ROLE_MATRIX = {
     "Upload Evidence": ["submitter"],
     "Evidence Repository": ["reviewer", "admin"],
     "Search & Export": ["reviewer", "admin"],
-    "Admin Panel": ["admin"],
     "Lawyer Portal": ["lawyer"],
     "Settings": ["submitter", "reviewer", "admin", "lawyer"],
 }

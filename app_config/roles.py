@@ -4,7 +4,7 @@ ROLES = {
     "admin": {
         "can_submit": True,
         "can_review": True,
-        "can_manage_users": True,
+        "can_manage_users": False,
         "can_export": True,
         "can_view_audit_logs": True,
         "is_read_only": False,
@@ -38,7 +38,7 @@ ROLES = {
 VALID_ROLES = list(ROLES.keys())
 
 ROLE_DESCRIPTIONS = {
-    "admin": "Manage users, review system status, and oversee workflows.",
+    "admin": "Review system status and oversee workflows.",
     "reviewer": "Review incidents, assess evidence, and export audit-ready reports.",
     "submitter": "Submit incidents, attach evidence, and track your reports.",
     "lawyer": "Review legal cases and access relevant incident summaries.",

@@ -302,7 +302,6 @@ def _safe_render_page(page: str):
         "Search & Export": ("modules.search_analytics", "render_search_analytics"),
         "Upload Evidence": ("modules.evidence_ui", "render_evidence_upload"),
         "Lawyer Portal": ("modules.lawyer_portal", "render_lawyer_portal"),
-        "Admin Panel": ("modules.admin_panel", "render_admin_panel"),
         "My Incidents": ("modules.my_incidents", "render_my_incidents"),
         "Evidence Repository": ("modules.evidence_repository", "render_evidence_repository"),
         "Settings": ("modules.settings_panel", "render_settings_panel"),
